@@ -1,0 +1,3068 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Lord of the Mysteries: Spoiler-Free Pathways</title>
+
+  <style>
+    :root {
+      color-scheme: dark;
+
+      --background: #0d0f15;
+      --surface: #171b24;
+      --surface-light: #202633;
+      --surface-hover: #293141;
+      --border: #353e50;
+
+      --text: #edf1f7;
+      --muted: #9fa9ba;
+      --gold: #d8b15d;
+
+      --confirmed: #58c68d;
+      --assumed: #e4a84e;
+
+      --sidebar-width: 290px;
+      --history-width: 310px;
+
+      /* Einheitliche Header-Höhe */
+      --header-height: 77px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      min-height: 100%;
+    }
+
+    body {
+      min-height: 100vh;
+      margin: 0;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top,
+          rgba(76, 63, 112, 0.38),
+          transparent 38%),
+        var(--background);
+      font-family:
+        Inter,
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+    }
+
+    /*
+   * Verhindert Scrollen des Main-Bereichs,
+   * solange das mobile Menü geöffnet ist.
+   */
+    body.menu-open {
+      overflow: hidden;
+    }
+
+    button,
+    input,
+    select {
+      font: inherit;
+    }
+
+    button {
+      color: inherit;
+    }
+
+    .app {
+      min-height: 100vh;
+    }
+
+    /*
+   * Header
+   */
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+
+      min-height: var(--header-height);
+      padding: 0.9rem 1.25rem;
+
+      background: rgba(13, 15, 21, 0.93);
+      border-bottom: 1px solid var(--border);
+      backdrop-filter: blur(16px);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.9rem;
+      min-width: 0;
+    }
+
+    .brand-icon {
+      display: grid;
+      flex: 0 0 auto;
+      place-items: center;
+
+      width: 46px;
+      height: 46px;
+
+      color: var(--background);
+      background:
+        linear-gradient(145deg,
+          #eed38c,
+          var(--gold));
+      border-radius: 50%;
+      box-shadow:
+        0 0 0 4px rgba(216, 177, 93, 0.1),
+        0 7px 25px rgba(216, 177, 93, 0.2);
+
+      font-family: Georgia, serif;
+      font-size: 1rem;
+      font-weight: 800;
+    }
+
+    .brand-copy {
+      min-width: 0;
+    }
+
+    .brand-copy span {
+      display: block;
+      color: var(--muted);
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .brand-copy h1 {
+      overflow: hidden;
+      margin: 0.1rem 0 0;
+      color: var(--gold);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(1.25rem, 3vw, 1.8rem);
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .header-progress {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+    }
+
+    .header-progress label {
+      color: var(--muted);
+      font-size: 0.82rem;
+      font-weight: 700;
+    }
+
+    .chapter-input {
+      width: 100px;
+      padding: 0.65rem 0.75rem;
+      color: var(--text);
+      background: var(--surface-light);
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      font-weight: 800;
+      text-align: center;
+    }
+
+    .chapter-input:focus {
+      border-color: var(--gold);
+      outline: 2px solid rgba(216, 177, 93, 0.2);
+    }
+
+    .mobile-menu-button {
+      display: none;
+      padding: 0.55rem 0.7rem;
+      background: var(--surface-light);
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      cursor: pointer;
+    }
+
+    /*
+   * Layout
+   */
+
+    .workspace {
+      display: grid;
+      grid-template-columns:
+        var(--sidebar-width) minmax(0, 1fr) var(--history-width);
+
+      min-height: calc(100vh - var(--header-height));
+    }
+
+    /*
+   * Sidebar
+   */
+
+    .sidebar {
+      position: sticky;
+      top: var(--header-height);
+      align-self: start;
+
+      height: calc(100vh - var(--header-height));
+      overflow-y: auto;
+      padding: 1rem;
+
+      background: rgba(18, 21, 29, 0.92);
+      border-right: 1px solid var(--border);
+    }
+
+    .sidebar-section+.sidebar-section {
+      margin-top: 1.25rem;
+    }
+
+    .section-label {
+      display: block;
+      margin-bottom: 0.55rem;
+      color: var(--muted);
+      font-size: 0.73rem;
+      font-weight: 800;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .search-input,
+    .filter-select {
+      width: 100%;
+      padding: 0.7rem 0.8rem;
+      color: var(--text);
+      background: var(--surface-light);
+      border: 1px solid var(--border);
+      border-radius: 9px;
+    }
+
+    .search-input:focus,
+    .filter-select:focus {
+      border-color: var(--gold);
+      outline: 2px solid rgba(216, 177, 93, 0.18);
+    }
+
+    .search-help {
+      display: block;
+      margin-top: 0.45rem;
+      color: var(--muted);
+      font-size: 0.72rem;
+      line-height: 1.45;
+    }
+
+    .statistics {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.55rem;
+    }
+
+    .stat {
+      padding: 0.7rem;
+      background: var(--surface-light);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+    }
+
+    .stat-value {
+      display: block;
+      font-size: 1.2rem;
+      font-weight: 850;
+    }
+
+    .stat-title {
+      display: block;
+      margin-top: 0.12rem;
+      color: var(--muted);
+      font-size: 0.72rem;
+    }
+
+    .pathway-list {
+      display: grid;
+      gap: 0.35rem;
+    }
+
+    .pathway-button {
+      width: 100%;
+      padding: 0.75rem;
+      color: var(--text);
+      background: transparent;
+      border: 1px solid transparent;
+      border-radius: 10px;
+      cursor: pointer;
+      text-align: left;
+      transition:
+        background 140ms ease,
+        border-color 140ms ease,
+        transform 140ms ease;
+    }
+
+    .pathway-button:hover {
+      background: var(--surface-light);
+      border-color: var(--border);
+      transform: translateX(2px);
+    }
+
+    .pathway-button.active {
+      background:
+        linear-gradient(100deg,
+          rgba(216, 177, 93, 0.2),
+          rgba(216, 177, 93, 0.04));
+      border-color: rgba(216, 177, 93, 0.42);
+    }
+
+    .pathway-button-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+    }
+
+    .pathway-name {
+      min-width: 0;
+      overflow: hidden;
+      font-weight: 750;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .pathway-count {
+      flex: 0 0 auto;
+      color: var(--muted);
+      font-size: 0.75rem;
+    }
+
+    .completion-bar {
+      display: block;
+      height: 4px;
+      margin-top: 0.55rem;
+      overflow: hidden;
+      background: #313847;
+      border-radius: 999px;
+    }
+
+    .completion-bar span {
+      display: block;
+      height: 100%;
+      background:
+        linear-gradient(90deg,
+          var(--gold),
+          #efd790);
+      border-radius: inherit;
+    }
+
+    .no-pathways {
+      padding: 1rem 0.6rem;
+      color: var(--muted);
+      font-size: 0.85rem;
+      text-align: center;
+    }
+
+    /*
+   * Main content
+   */
+
+    .main-content {
+      min-width: 0;
+      padding: 1.5rem;
+    }
+
+    .pathway-card {
+      overflow: hidden;
+      background: rgba(23, 27, 36, 0.96);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      box-shadow: 0 16px 45px rgba(0, 0, 0, 0.22);
+    }
+
+    .pathway-card-header {
+      position: relative;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 1rem;
+      padding: 1.35rem;
+
+      background:
+        radial-gradient(circle at top right,
+          rgba(216, 177, 93, 0.22),
+          transparent 42%);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .pathway-title-group h2 {
+      margin: 0;
+      color: var(--gold);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(1.7rem, 4vw, 2.3rem);
+    }
+
+    .pathway-subtitle {
+      margin: 0.4rem 0 0;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .favorite-button {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      padding: 0.6rem 0.75rem;
+      background: var(--surface-light);
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .favorite-button:hover {
+      border-color: rgba(216, 177, 93, 0.45);
+    }
+
+    .favorite-button.active {
+      color: var(--gold);
+      border-color: rgba(216, 177, 93, 0.45);
+    }
+
+    .pathway-overview {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 0.75rem;
+      padding: 1rem 1.35rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .overview-stat {
+      min-width: 0;
+      padding: 0.85rem;
+      text-align: center;
+      background: var(--surface-light);
+      border: 1px solid var(--border);
+      border-radius: 11px;
+    }
+
+    .overview-stat strong {
+      display: block;
+      overflow: hidden;
+      color: var(--gold);
+      font-size: 1.25rem;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .overview-stat span {
+      display: block;
+      margin-top: 0.2rem;
+      color: var(--muted);
+      font-size: 0.75rem;
+    }
+
+    /*
+   * Sequence ladder
+   */
+
+    .sequence-ladder {
+      display: grid;
+      gap: 0.55rem;
+      padding: 1.35rem;
+    }
+
+    .sequence-row {
+      display: grid;
+      grid-template-columns: 68px minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 0.8rem;
+
+      min-height: 65px;
+      padding: 0.7rem 0.85rem;
+
+      background: var(--surface-light);
+      border: 1px solid var(--border);
+      border-radius: 11px;
+      transition:
+        border-color 140ms ease,
+        background 140ms ease;
+    }
+
+    .sequence-row:hover {
+      background: var(--surface-hover);
+      border-color: #4a556b;
+    }
+
+    .sequence-row.search-match {
+      border-color: rgba(216, 177, 93, 0.55);
+      box-shadow: inset 3px 0 0 var(--gold);
+    }
+
+    .sequence-value {
+      display: grid;
+      place-items: center;
+
+      width: 44px;
+      height: 36px;
+
+      color: var(--gold);
+      background: rgba(216, 177, 93, 0.1);
+      border: 1px solid rgba(216, 177, 93, 0.28);
+      border-radius: 8px;
+
+      font-weight: 900;
+    }
+
+    .sequence-copy {
+      min-width: 0;
+    }
+
+    .sequence-copy strong {
+      display: block;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .sequence-copy small {
+      display: block;
+      margin-top: 0.18rem;
+      color: var(--muted);
+      font-size: 0.75rem;
+    }
+
+    .sequence-note {
+      display: block;
+      margin-top: 0.35rem;
+      color: var(--muted);
+      font-size: 0.8rem;
+      line-height: 1.45;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.38rem;
+      padding: 0.3rem 0.55rem;
+      border-radius: 999px;
+      font-size: 0.72rem;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .badge-confirmed {
+      color: var(--confirmed);
+      background: rgba(88, 198, 141, 0.11);
+      border: 1px solid rgba(88, 198, 141, 0.32);
+    }
+
+    .badge-assumed {
+      color: var(--assumed);
+      background: rgba(228, 168, 78, 0.11);
+      border: 1px solid rgba(228, 168, 78, 0.32);
+    }
+
+    .badge::before {
+      width: 0.45rem;
+      height: 0.45rem;
+      background: currentColor;
+      border-radius: 50%;
+      content: "";
+    }
+
+    /*
+   * Reveal history
+   */
+
+    .history-panel {
+      position: sticky;
+      top: var(--header-height);
+      align-self: start;
+
+      height: calc(100vh - var(--header-height));
+      overflow-y: auto;
+      padding: 1rem;
+
+      background: rgba(18, 21, 29, 0.78);
+      border-left: 1px solid var(--border);
+    }
+
+    .history-panel h2 {
+      margin: 0;
+      color: var(--gold);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 1.25rem;
+    }
+
+    .history-intro {
+      margin: 0.4rem 0 1rem;
+      color: var(--muted);
+      font-size: 0.82rem;
+    }
+
+    .history-list {
+      position: relative;
+      display: grid;
+      gap: 0;
+    }
+
+    .history-list::before {
+      position: absolute;
+      top: 0.55rem;
+      bottom: 0.55rem;
+      left: 5px;
+      width: 1px;
+      background: var(--border);
+      content: "";
+    }
+
+    .history-entry {
+      position: relative;
+      padding: 0 0 1rem 1.5rem;
+    }
+
+    .history-entry::before {
+      position: absolute;
+      top: 0.35rem;
+      left: 0;
+
+      width: 11px;
+      height: 11px;
+
+      background: var(--gold);
+      border: 3px solid var(--surface);
+      border-radius: 50%;
+      box-shadow: 0 0 0 1px var(--gold);
+      content: "";
+    }
+
+    .history-entry.assumed::before {
+      background: var(--assumed);
+      box-shadow: 0 0 0 1px var(--assumed);
+    }
+
+    .history-chapter {
+      color: var(--gold);
+      font-size: 0.72rem;
+      font-weight: 850;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    .history-entry strong {
+      display: block;
+      margin-top: 0.15rem;
+      font-size: 0.92rem;
+    }
+
+    .history-entry span {
+      display: block;
+      margin-top: 0.2rem;
+      color: var(--muted);
+      font-size: 0.76rem;
+    }
+
+    .empty-state {
+      padding: 2.5rem 1rem;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    /*
+   * Mobile overlay
+   */
+
+    .mobile-overlay {
+      position: fixed;
+      inset: var(--header-height) 0 0;
+      z-index: 25;
+
+      display: none;
+
+      background: rgba(0, 0, 0, 0.58);
+    }
+
+    .mobile-overlay.visible {
+      display: block;
+    }
+
+    /*
+   * Responsive layout
+   */
+
+    @media (max-width: 1050px) {
+      .workspace {
+        grid-template-columns:
+          var(--sidebar-width) minmax(0, 1fr);
+      }
+
+      .history-panel {
+        position: static;
+        grid-column: 2;
+        width: auto;
+        height: auto;
+        border-top: 1px solid var(--border);
+        border-left: 0;
+      }
+    }
+
+    /*
+   * Mobile
+   */
+
+    @media (max-width: 760px) {
+      :root {
+        --header-height: 69px;
+      }
+
+      .topbar {
+        min-height: var(--header-height);
+        padding: 0.7rem 0.8rem;
+      }
+
+      .brand-icon {
+        width: 39px;
+        height: 39px;
+        font-size: 0.8rem;
+      }
+
+      .brand-copy span {
+        display: none;
+      }
+
+      .brand-copy h1 {
+        font-size: 1.05rem;
+      }
+
+      .header-progress label {
+        display: none;
+      }
+
+      .chapter-input {
+        width: 78px;
+      }
+
+      .mobile-menu-button {
+        display: inline-flex;
+      }
+
+      .workspace {
+        display: block;
+        min-height: auto;
+      }
+
+      /*
+     * Mobile Sidebar
+     *
+     * Eigener Scrollbereich.
+     * 100dvh berücksichtigt die tatsächlich sichtbare
+     * Viewport-Höhe auf modernen mobilen Browsern besser.
+     */
+      .sidebar {
+        position: fixed;
+        top: var(--header-height);
+        bottom: 0;
+        left: 0;
+        z-index: 30;
+
+        width: min(88vw, 320px);
+        height: calc(100dvh - var(--header-height));
+
+        overflow-x: hidden;
+        overflow-y: auto;
+        overscroll-behavior: contain;
+        -webkit-overflow-scrolling: touch;
+
+        box-shadow: 18px 0 45px rgba(0, 0, 0, 0.45);
+
+        transform: translateX(-105%);
+        transition: transform 180ms ease;
+      }
+
+      .sidebar.open {
+        transform: translateX(0);
+      }
+
+      .main-content {
+        padding: 0.8rem;
+      }
+
+      .pathway-card-header {
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      .favorite-button {
+        align-self: flex-start;
+      }
+
+      /*
+     * Reveal History auf Smartphones vollständig ausblenden.
+     * Die Definition aus dem 1050px-Breakpoint wird dadurch
+     * überschrieben.
+     */
+      .history-panel {
+        display: none;
+      }
+
+      .pathway-overview {
+        grid-template-columns: 1fr;
+      }
+
+      .sequence-row {
+        grid-template-columns: 55px minmax(0, 1fr);
+      }
+
+      .sequence-row .badge {
+        grid-column: 2;
+        justify-self: start;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div class="brand">
+        <button class="mobile-menu-button" id="mobileMenuButton" type="button" aria-label="Open pathway navigation"
+          aria-controls="sidebar" aria-expanded="false">
+          ☰
+        </button>
+
+        <div class="brand-icon">XXII</div> <!-- Ⅸ-->
+
+        <div class="brand-copy">
+          <span>Lord of the Mysteries</span>
+          <h1>Pathways &amp; Sequences</h1>
+        </div>
+      </div>
+
+      <div class="header-progress">
+        <label for="chapterInput">Current chapter</label>
+
+        <input class="chapter-input" id="chapterInput" type="number" min="1" max="1432" value="1" inputmode="numeric">
+      </div>
+    </header>
+
+    <div class="workspace">
+      <aside class="sidebar" id="sidebar">
+        <section class="sidebar-section">
+          <label class="section-label" for="searchInput">
+            Search
+          </label>
+
+          <input class="search-input" id="searchInput" type="search" placeholder="Pathway, name or notes..."
+            autocomplete="off">
+
+          <small class="search-help">
+            Searches all visible Pathway names, Sequence names,
+            and notes.
+          </small>
+        </section>
+
+        <section class="sidebar-section">
+          <label class="section-label" for="statusFilter">
+            Status
+          </label>
+
+          <select class="filter-select" id="statusFilter">
+            <option value="all">
+              Confirmed and assumed
+            </option>
+
+            <option value="confirmed">
+              Confirmed only
+            </option>
+
+            <option value="assumed">
+              Assumed only
+            </option>
+          </select>
+        </section>
+
+        <section class="sidebar-section">
+          <span class="section-label">Progress</span>
+
+          <div class="statistics">
+            <div class="stat">
+              <strong class="stat-value" id="knownCount">0</strong>
+              <span class="stat-title">Visible names</span>
+            </div>
+
+            <div class="stat">
+              <strong class="stat-value" id="pathwayCount">0</strong>
+              <span class="stat-title">Pathways</span>
+            </div>
+
+            <div class="stat">
+              <strong class="stat-value" id="confirmedCount">0</strong>
+              <span class="stat-title">Confirmed</span>
+            </div>
+
+            <div class="stat">
+              <strong class="stat-value" id="assumedCount">0</strong>
+              <span class="stat-title">Assumed</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="sidebar-section">
+          <span class="section-label">Pathways</span>
+          <nav class="pathway-list" id="pathwayList"></nav>
+        </section>
+      </aside>
+
+      <main class="main-content" id="mainContent"></main>
+
+      <aside class="history-panel">
+        <h2>Reveal History</h2>
+
+        <p class="history-intro">
+          The latest discoveries visible at your current reading
+          progress.
+        </p>
+
+        <div class="history-list" id="historyList"></div>
+      </aside>
+    </div>
+
+    <div class="mobile-overlay" id="mobileOverlay" aria-hidden="true"></div>
+  </div>
+
+  <script>
+    /*
+     * DATA FORMAT
+     *
+     * 0: Pathway
+     * 1: Sequence number
+     * 2: Sequence name
+     * 3: First visible chapter
+     * 4: Whether the chapter is exact
+     * 5: Initial status
+     * 6: Initial note
+     * 7: Optional revelation history
+     */
+
+    const rawSequenceData = [
+      /*
+       * Neighbouring Pathways:
+       * Seer, Marauder, Apprentice
+       * Storm, Sun, Spectator, Reader, Secrets Suppliant
+       * Mystery Prier, Savant
+       * Arbiter, Lawyer
+       * Prisoner, Criminal
+       * Hunter, Assassin
+       * Planter, Apothecary
+       * Monster doens't have any
+       */
+      /*
+       * Seer
+       */
+      [
+        "seer", 9, "Seer", 28, true, "confirmed",
+        "Explicitly identified as Sequence 9."
+      ],
+      [
+        "seer", 8, "Clown", 75, true, "confirmed",
+        "Confirmed as the Sequence following Seer."
+      ],
+      [
+        "seer", 7, "Magician", 251, true, "confirmed",
+        "Obtained through spirit channeling involving Rosago."
+      ],
+      [
+        "seer", 6, "Faceless", 251, true, "confirmed",
+        "Obtained through spirit channeling involving Rosago."
+      ],
+      [
+        "seer", 5, "Nimblewright Master", 251, true, "confirmed",
+        "Obtained through spirit channeling involving Rosago. " +
+        "Also known as Marionettist."
+      ],
+      [
+        "seer", 4, "Bizarro Sorcerer", 675, true, "confirmed",
+        "Confirmed by Will Auceptin. Also known as Arcane Sorcerer."
+      ],
+      [
+        "seer", 3, "Scholar of Yore", 839, true, "confirmed",
+        "Named by Zaratul in Foggy Town."
+      ],
+      [
+        "seer", 2, "Miracle Invoker", 237, true, "confirmed",
+        "Explicitly identified as Sequence 2 in Roselle's diary."
+      ],
+      [
+        "seer", 1, "Attendant of Mysteries", 713, true, "confirmed",
+        "Explicitly identified as Sequence 1 by Arrodes."
+      ],
+      [
+        "seer", 0, "Fool", 842, true, "confirmed",
+        "Revealed through the corresponding Card of Blasphemy."
+      ],
+
+      /*
+       * Marauder
+       */
+      [
+        "marauder", 9, "Marauder", 65, true, "confirmed",
+        "Known from the Nighthawks' internal documents."
+      ],
+      [
+        "marauder", 8, "Swindler", 65, true, "confirmed",
+        "Known from the Nighthawks' internal documents."
+      ],
+      [
+        "marauder", 7, "Cryptologist", 697, true, "confirmed",
+        "Mobet identifies Cryptologist as Sequence 7."
+      ],
+      [
+        "marauder", 6, "Fire Bandit", 697, true, "confirmed",
+        "Mobet identifies Fire Bandit as Sequence 6."
+      ],
+      [
+        "marauder", 5, "Dream Stealer", 697, true, "confirmed",
+        "Mobet identifies himself as a Sequence 5 Dream Stealer " +
+        "of the Marauder Pathway."
+      ],
+      [
+        "marauder", 3, "Mentor of Deceit", 1162, true, "confirmed",
+        "Amon reveals this fact while talking to Klein."
+      ],
+      [
+        "marauder", 2, "Trojan Horse of Destiny", 1005, true, "confirmed",
+        "Amon reveals this fact while talking to Klein."
+      ],
+      [
+        "marauder", 1, "Worm of Time", 393, true, "assumed",
+        "Introduced as a commonly believed Sequence 1 potion name.",
+        [
+          {
+            chapter: 393,
+            exactChapter: true,
+            status: "assumed",
+            note:
+              "Introduced as a rumor or commonly believed name for " +
+              "Sequence 1 of the Marauder Pathway."
+          }
+        ]
+      ],
+      [
+        "marauder", 0, "Error", 1152, true, "confirmed",
+        "Amon reveals this fact while talking to Klein."
+      ],
+
+      /*
+       * Apprentice
+       */
+      [
+        "apprentice", 9, "Apprentice", 65, true, "confirmed",
+        "Known from the Nighthawks' internal documents."
+      ],
+      [
+        "apprentice", 8, "Trickmaster", 65, true, "confirmed",
+        "Known from the Nighthawks' internal documents."
+      ],
+      [
+        "apprentice", 7, "Astrologer", 336, true, "confirmed",
+        "An Abraham family notebook explicitly lists Astrologer " +
+        "as Sequence 7."
+      ],
+      [
+        "apprentice", 6, "Scribe", 646, true, "confirmed",
+        "Dorian explicitly identifies Scribe as Sequence 6 of " +
+        "the Apprentice Pathway."
+      ],
+      [
+        "apprentice", 5, "Traveler", 646, true, "confirmed",
+        "Dorian identifies Traveler as the stage following Scribe."
+      ],
+      [
+        "apprentice", 4, "Secrets Sorcerer", 688, true, "confirmed",
+        "Explicitly identified as Sequence 4 of the Apprentice Pathway."
+      ],
+      [
+        "apprentice", 3, "Wanderer", 1076, true, "confirmed",
+        "Explicitly identified as Sequence 3 of the Apprentice Pathway by Dorian."
+      ],
+      [
+        "apprentice", 2, "Planeswalker", 1076, true, "confirmed",
+        "Explicitly identified as Sequence 2 of the Apprentice Pathway by Dorian."
+      ],
+      [
+        "apprentice", 1, "Key of Stars", 1076, true, "confirmed",
+        "Explicitly identified as Sequence 1 of the Apprentice Pathway by Dorian."
+      ],
+      [
+        "apprentice", 0, "Door", 1382, true, "confirmed",
+        "Can be deduced by the mentioning of the 'Door Pathway', indicating 'Door' as the Name of Sequence 0 of the Apprentice Pathway.",
+        [
+          {
+            chapter: 1382,
+            exactChapter: true,
+            status: "confirmed",
+            note:
+              "Can be deduced by the mentioning of the 'Door Pathway', indicating 'Door' as the Name of Sequence 0 of the Apprentice Pathway."
+          }
+        ]
+      ],
+
+      /*
+       * Spectator
+       */
+      [
+        "spectator", 9, "Spectator", 65, true, "confirmed",
+        "Known from the Nighthawks' internal documents."
+      ],
+      [
+        "spectator", 8, "Telepathist", 65, true, "confirmed",
+        "Known from the Nighthawks' internal documents."
+      ],
+      [
+        "spectator", 7, "Psychiatrist", 65, true, "confirmed",
+        "Known from the Nighthawks' internal documents. " +
+        "The ancient name is Psyche Analyst."
+      ],
+      [
+        "spectator", 6, "Hypnotist", 632, true, "confirmed",
+        "Revealed as Sequence 6 of the Spectator Pathway."
+      ],
+      [
+        "spectator", 5, "Dreamwalker", 970, true, "confirmed",
+        "Confirmed by Miss Escalante as Sequence 5 of the Spectator Pathway."
+      ],
+      [
+        "spectator", 4, "Manipulator", 265, true, "assumed",
+        "Initially assigned to the Spectator or Dragon Pathway ",
+        [
+          {
+            chapter: 265,
+            exactChapter: true,
+            status: "assumed",
+            note:
+              "Klein is wondering if Sequence 4 Manipulator belongs to the Spectator Pathway. "
+          }
+        ]
+      ],
+      [
+        "spectator", 3, "Dreamweaver", 1053, true, "confirmed",
+        "Obtained through Hvin Rambis' Soul after killing him."
+      ],
+      [
+        "spectator", 2, "Discerner", 485, true, "confirmed",
+        "Explicitly identified as Sequence 2 in Roselle's records."
+      ],
+      [
+        "spectator", 1, "Author", 485, true, "confirmed",
+        "Explicitly identified as Sequence 1 in Roselle's records."
+      ],
+      [
+        "spectator", 0, "Visionary", 485, true, "confirmed",
+        "Explicitly identified as Sequence 0 in Roselle's records."
+      ],
+
+      /*
+       * Sun
+       */
+      [
+        "bard", 9, "Bard", 140, true, "confirmed",
+        "Identified after the encounter with the Eternal Blazing Sun."
+      ],
+      [
+        "bard", 8, "Light Suppliant", 140, true, "confirmed",
+        "Identified after the encounter with the Eternal Blazing Sun."
+      ],
+      [
+        "bard", 7, "Solar High Priest", 140, true, "confirmed",
+        "Identified after the encounter with the Eternal Blazing Sun."
+      ],
+      [
+        "bard", 6, "Notary", 680, true, "confirmed",
+        "A potion formula explicitly identifies Sequence 6 Notary."
+      ],
+      [
+        "bard", 5, "Priest of Light", 680, true, "confirmed",
+        "The same formula sequence identifies Sequence 5 Priest of Light."
+      ],
+      [
+        "bard", 4, "Unshadowed", 140, true, "confirmed",
+        "Identified after the encounter with the Eternal Blazing Sun."
+      ],
+      [
+        "bard", 3, "Justice Mentor", 1034, true, "assumed",
+        "Obtained by Klein after looking directly at the Ancient Sun God." +
+        "It wasn't explicitly stated, that it belongs to the Sun Pathway."
+      ],
+      [
+        "bard", 2, "x", 2000, true, "confirmed",
+        "COI"
+      ],
+      [
+        "bard", 1, "White Angel", 1345, true, "confirmed",
+        "Obtained by Klein after reading the Second Blasphemy Slate."
+      ],
+      [
+        "bard", 0, "Sun", 265, true, "confirmed",
+        "Identified by Roselle as Sequence 0 of the Sun Pathway." +
+        "Also revealing for the first time, that there is a Sequence above Sequence 1."
+      ],
+
+      /*
+       * Storm / Sailor
+       */
+      [
+        "sailor", 9, "Sailor", 65, true, "confirmed",
+        "Known from the Nighthawks' internal documents."
+      ],
+      [
+        "sailor", 8, "Folk of Rage", 65, true, "confirmed",
+        "Known from the Nighthawks' internal documents. " +
+        "Ancient name: Guardian of the Windstorm."
+      ],
+      [
+        "sailor", 7, "Seafarer", 65, true, "confirmed",
+        "Known from the Nighthawks' internal documents. " +
+        "Ancient name: Windstorm Priest."
+      ],
+      [
+        "sailor", 6, "Wind-blessed", 145, true, "confirmed",
+        "Alger identifies Wind-blessed as Sequence 6."
+      ],
+      [
+        "sailor", 5, "Ocean Songster", 366, true, "confirmed",
+        "Alger identifies Ocean Songster as Sequence 5."
+      ],
+      [
+        "sailor", 4, "Cataclysmic Interrer", 815, true, "confirmed",
+        "Confirmed through the Tyrant Card of Blasphemy."
+      ],
+      [
+        "sailor", 3, "Sea King", 540, true, "confirmed",
+        "Explicitly revealed immediately before Chapter 541."
+      ],
+      [
+        "sailor", 2, "Calamity", 815, true, "confirmed",
+        "Confirmed through the Tyrant Card of Blasphemy."
+      ],
+      [
+        "sailor", 1, "Thunder God", 815, true, "confirmed",
+        "Confirmed through the Tyrant Card of Blasphemy."
+      ],
+      [
+        "sailor", 0, "Tyrant", 815, true, "confirmed",
+        "Confirmed through the Tyrant Card of Blasphemy."
+      ],
+
+      /*
+       * Reader
+       */
+      [
+        "reader", 9, "Reader", 203, true, "confirmed",
+        "The Pathway is explicitly identified as the Reader Pathway."
+      ],
+      [
+        "reader", 8, "x", 2000, true, "confirmed",
+        "COI"
+      ],
+      [
+        "reader", 7, "Detective", 415, true, "confirmed",
+        "Identified as Sequence 7. Knowledge Keeper is also given " +
+        "as an alternative name."
+      ],
+      [
+        "reader", 6, "Polymath", 418, true, "confirmed",
+        "Revealed immediately before Chapter 419."
+      ],
+      [
+        "reader", 5, "Mysticism Magister", 534, true, "assumed",
+        "It is mentioned that Edwina is a Mysticism Magister of the Reader Pathway." +
+        "Since she is a Pirate Admiral, that would place her Power around Sequence 5."
+      ],
+      [
+        "reader", 4, "Prophet", 244, true, "assumed",
+        "Initially associated with the Pathway of the God of " +
+        "Knowledge and Wisdom through Klein's reasoning.",
+        [
+          {
+            chapter: 244,
+            exactChapter: true,
+            status: "assumed",
+            note:
+              "Klein suspects that Prophet belongs to the Pathway " +
+              "of the God of Knowledge and Wisdom."
+          }
+        ]
+      ],
+      [
+        "reader", 3, "x", 2000, true, "confirmed",
+        "COI"
+      ],
+      [
+        "reader", 2, "x", 2000, true, "confirmed",
+        "COI"
+      ],
+      [
+        "reader", 1, "Omniscient Eye", 1345, true, "confirmed",
+        "Obtained by Klein after reading the Second Blasphemy Slate."
+      ],
+      [
+        "reader", 0, "White Tower", 1345, true, "confirmed",
+        "Mentioned as 'White Tower Uniqueness' on the Second Blasphemy Slate."
+      ],
+
+      /*
+       * Secrets Suppliant
+       */
+      [
+        "secrets_suppliant", 9, "Secrets Suppliant",
+        138, true, "confirmed",
+        "Explicitly identified as Sequence 9 by Derrick."
+      ],
+      [
+        "secrets_suppliant", 8, "Listener", 138, true, "confirmed",
+        "Called Listener in the Northern Continent. Derrick uses the alternative name 'Whispered'."
+      ],
+      [
+        "secrets_suppliant", 7, "Shadow Ascetic",
+        138, true, "confirmed",
+        "Explicitly identified as Sequence 7 by Derrick."
+      ],
+      [
+        "secrets_suppliant", 6, "Rose Bishop",
+        138, true, "confirmed",
+        "The text also uses the alternative name Rose Priest."
+      ],
+      [
+        "secrets_suppliant", 5, "Shepherd",
+        138, true, "confirmed",
+        "Explicitly identified as Sequence 5 by Derrick."
+      ],
+      [
+        "secrets_suppliant", 4, "Black Knight", 1034, true, "assumed",
+        "Obtained by Klein after looking directly at the Ancient Sun God." +
+        "It wasn't explicitly stated, that it belongs to the Secrets Suppliant Pathway."
+      ],
+      [
+        "secrets_suppliant", 3, "Trinity Templar", 1034, true, "assumed",
+        "Obtained by Klein after looking directly at the Ancient Sun God." +
+        "It wasn't explicitly stated, that it belongs to the Secrets Suppliant Pathway."
+      ],
+      [
+        "secrets_suppliant", 2, "x", 2000, true, "confirmed",
+        "COI"
+      ],
+      [
+        "secrets_suppliant", 1, "Dark Angel", 1345, true, "confirmed",
+        "Obtained by Klein after reading the Second Blasphemy Slate."
+      ],
+      [
+        "secrets_suppliant", 0, "The Hanged Man",
+        1155, true, "confirmed",
+        "Explicitly identified as Sequence 0 by Amon."
+      ],
+
+      /*
+       * Sleepless
+       */
+      [
+        "sleepless", 9, "Sleepless", 22, true, "confirmed",
+        "Explicitly identified as Sequence 9."
+      ],
+      [
+        "sleepless", 8, "Midnight Poet", 21, true, "confirmed",
+        "Leonard introduces himself as a Sequence 8 Midnight Poet."
+      ],
+      [
+        "sleepless", 7, "Nightmare", 22, true, "confirmed",
+        "Explicitly identified as Sequence 7."
+      ],
+      [
+        "sleepless", 6, "Soul Assurer", 750, true, "confirmed",
+        "Leonard's advancement to Soul Assurer is mentioned."
+      ],
+      [
+        "sleepless", 5, "Spirit Warlock", 750, true, "confirmed",
+        "Identified as Sequence 5 through Soest's advancement."
+      ],
+      [
+        "sleepless", 4, "Nightwatcher", 210, true, "confirmed",
+        "Explicitly identified as Sequence 4 of the Evernight Pathway."
+      ],
+      [
+        "sleepless", 3, "Horror Bishop", 1164, true, "confirmed",
+        "Explicitly mentioned as Sequence 3 of the Sleepless Pathway."
+      ],
+      [
+        "sleepless", 2, "Servant of Concealment", 992, true, "assumed",
+        "Assumed by Klein as Sequence 2 of the Evernight Pathway.",
+        [
+          {
+            chapter: 992,
+            exactChapter: true,
+            status: "assumed",
+            note:
+              "Assumed by Klein as Sequence 2 of the Evernight Pathway."
+          },
+          {
+            chapter: 1263,
+            exactChapter: true,
+            status: "confirmed",
+            note:
+              "Klein mentions the Powers of a Servant of Concealment are on the Level of an Angel."
+          }
+        ]
+      ],
+      [
+        "sleepless", 1, "Knight of Misfortune", 1347, true, "confirmed",
+        "Obtained by Klein after reading the Second Blasphemy Slate."
+      ],
+      [
+        "sleepless", 0, "Evernight", 1347, true, "confirmed",
+        "Mentioned as 'Evernight Uniqueness' on the Second Blasphemy Slate."
+      ],
+
+      /*
+       * Death / Corpse Collector
+       */
+      [
+        "corpse_collector", 9, "Corpse Collector",
+        28, true, "confirmed",
+        "Identified as the starting Sequence."
+      ],
+      [
+        "corpse_collector", 8, "Gravedigger",
+        65, true, "confirmed",
+        "Identified as the Sequence following Corpse Collector."
+      ],
+      [
+        "corpse_collector", 7, "Spirit Medium",
+        65, true, "confirmed",
+        "Explicitly identified as Sequence 7."
+      ],
+      [
+        "corpse_collector", 6, "Spirit Guide",
+        148, true, "confirmed",
+        "Daly confirms that she is Sequence 6 and that the current " +
+        "name of her stage is Spirit Guide."
+      ],
+      [
+        "corpse_collector", 5, "Gatekeeper",
+        96, true, "confirmed",
+        "Explicitly identified as Sequence 5 of this Pathway."
+      ],
+      [
+        "corpse_collector", 4, "Undying",
+        916, true, "confirmed",
+        "Explicitly identified as Sequence 4."
+      ],
+      [
+        "corpse_collector", 3, "Ferryman", 900, true, "assumed",
+        "Mentioned as Sequence 3 of the 'Phoenix Pathway'.",
+        {
+          chapter: 904,
+          exactChapter: true,
+          status: "confirmed",
+          note:
+            "Klein mentions it as Sequence 3 of the 'Death Pathway'."
+        }
+      ],
+      [
+        "corpse_collector", 2, "Death Consul",
+        919, true, "confirmed",
+        "Death Consul is explicitly identified as Sequence 2 " +
+        "of the Death Pathway."
+      ],
+      [
+        "corpse_collector", 1, "Pale Emperor", 1347, true, "confirmed",
+        "Obtained by Klein after reading the Second Blasphemy Slate."
+      ],
+      [
+        "corpse_collector", 0, "Death", 266, true, "assumed",
+        "Klein speculates wether there is a Sequence 0, Death.",
+        {
+          chapter: 1347,
+          exactChapter: true,
+          status: "confirmed",
+          note:
+            "Also known as 'Eternal Sleeper'."
+        }
+      ],
+
+      /*
+       * Warrior / Giant
+       */
+      [
+        "warrior", 9, "Warrior", 138, true, "confirmed",
+        "Modern name of Sequence 9. Derrick uses the ancient name " +
+        "Beyonder Warrior."
+      ],
+      [
+        "warrior", 8, "Pugilist", 138, true, "confirmed",
+        "Modern name of Sequence 8. Derrick uses the ancient name " +
+        "Gladiator."
+      ],
+      [
+        "warrior", 7, "Weapons Master",
+        138, true, "confirmed",
+        "Known from the Nighthawks' internal documents."
+      ],
+      [
+        "warrior", 6, "Dawn Paladin",
+        138, true, "confirmed",
+        "Explicitly identified as Sequence 6 by Derrick."
+      ],
+      [
+        "warrior", 5, "Guardian",
+        138, true, "confirmed",
+        "Explicitly identified as Sequence 5 by Derrick."
+      ],
+      [
+        "warrior", 4, "Demon Hunter",
+        138, true, "confirmed",
+        "Explicitly identified as Sequence 4 by Derrick."
+      ],
+      [
+        "warrior", 3, "Silver Knight",
+        1113, true, "confirmed",
+        "Confirmed by Derrick after encountering 2 Silver Knights at the Giant Kings Court."
+      ],
+      [
+        "warrior", 2, "x", 2000, true, "confirmed",
+        "COI"
+      ],
+      [
+        "warrior", 1, "Hand of God", 1347, true, "confirmed",
+        "Obtained by Klein after reading the Second Blasphemy Slate."
+      ],
+      [
+        "warrior", 0, "Twilight Giant", 1347, true, "confirmed",
+        "Obtained by Klein after reading the Second Blasphemy Slate."
+      ],
+
+      /*
+       * Demoness
+       */
+      [
+        "assassin", 9, "Assassin", 66, true, "confirmed",
+        "Explicitly identified as Sequence 9."
+      ],
+      [
+        "assassin", 8, "Instigator", 66, true, "confirmed",
+        "Explicitly identified as Sequence 8."
+      ],
+      [
+        "assassin", 7, "Witch", 199, true, "confirmed",
+        "Identified as Sequence 7 at the end of Chapter 199."
+      ],
+      [
+        "assassin", 6, "Pleasure", 200, true, "confirmed",
+        "Identified as Sequence 6. Also called Demoness of Pleasure."
+      ],
+      [
+        "assassin", 5, "Affliction", 575, true, "confirmed",
+        "Tracy is identified as a Sequence 5 Demoness of Affliction."
+      ],
+      [
+        "assassin", 4, "Despair", 478, true, "confirmed",
+        "Lady Despair is called a Sequence 4 Demoness of Despair."
+      ],
+      [
+        "assassin", 3, "Unaging", 600, true, "assumed",
+        "",
+        [
+          {
+            chapter: 588,
+            exactChapter: true,
+            status: "assumed",
+            note:
+              "Katarina is called a Demoness of Unaging. The " +
+              "Sequence number is not explicitly given here."
+          },
+          {
+            chapter: 1043,
+            exactChapter: true,
+            status: "confirmed",
+            note:
+              "Trissy confirms that Katarina is a Sequence 3 Demoness of Unaging."
+          }
+        ]
+      ],
+      [
+        "assassin", 2, "x", 2000, true, "confirmed",
+        "COI"
+      ],
+      [
+        "assassin", 1, "x", 2000, true, "confirmed",
+        "COI"
+      ],
+      [
+        "assassin", 0, "Primordial Demoness", 266, true, "assumed",
+        "Klein guesses if Primordial Demoness is the name of Sequence 0."
+      ],
+
+      /*
+       * Hunter / Red Priest
+       */
+      [
+        "hunter", 9, "Hunter",
+        200, true, "confirmed",
+        "Explicitly identified as Sequence 9."
+      ],
+      [
+        "hunter", 8, "Provoker",
+        200, true, "confirmed",
+        "Explicitly identified as Sequence 8."
+      ],
+      [
+        "hunter", 7, "Pyromaniac",
+        200, true, "confirmed",
+        "Explicitly identified as Sequence 7."
+      ],
+      [
+        "hunter", 6, "Conspiracist",
+        242, true, "confirmed",
+        "Identified as Sequence 6. Also called Conspirer."
+      ],
+      [
+        "hunter", 5, "Reaper",
+        653, true, "confirmed",
+        "Identified by Cattleya as Sequence 5 of the Hunter Pathway.",
+      ],
+      [
+        "hunter", 4, "Iron-blooded Knight",
+        500, false, "confirmed",
+        "Identified as Sequence 4 in Roselle's records.",
+        [
+          {
+            chapter: 484,
+            exactChapter: true,
+            status: "assumed",
+            note:
+              "It is stated that the Hunter Pathway changes Gender to male at Sequence 4 " +
+              "and hinted that Iron-blooded Knight is a true man."
+          },
+          {
+            chapter: 775,
+            exactChapter: true,
+            status: "confirmed",
+            note:
+              "Klein treats it as a fact while talking to Trissy."
+          }
+        ]
+      ],
+      [
+        "hunter", 3, "War Bishop",
+        949, true, "confirmed",
+        "Obtained after reading the Card of Blasphemy."
+      ],
+      [
+        "hunter", 2, "Weather Warlock",
+        949, true, "confirmed",
+        "Obtained after reading the Card of Blasphemy."
+      ],
+      [
+        "hunter", 1, "Conqueror",
+        949, true, "confirmed",
+        "Obtained after reading the Card of Blasphemy."
+      ],
+      [
+        "hunter", 0, "Red Priest",
+        456, true, "confirmed",
+        "Shown as Sequence 0 on a Card of Blasphemy."
+      ],
+
+      /*
+       * Mystery Pryer
+       */
+      [
+        "mystery_pryer", 9, "Mystery Pryer",
+        22, true, "confirmed",
+        "Identified as the starting Sequence."
+      ],
+      [
+        "mystery_pryer", 8, "Melee Scholar",
+        81, true, "confirmed",
+        "Old Neil identifies Melee Scholar as Sequence 8."
+      ],
+      [
+        "mystery_pryer", 7, "Warlock",
+        65, true, "confirmed",
+        "Known from the Nighthawks' internal documents."
+      ],
+      [
+        "mystery_pryer", 6, "Scrolls Professor",
+        217, true, "confirmed",
+        "Explicitly identified as Sequence 6 in Roselle's records."
+      ],
+      [
+        "mystery_pryer", 5, "x", 2000, true, "confirmed",
+        "COI"
+      ],
+      [
+        "mystery_pryer", 4, "Mysticologist",
+        462, true, "confirmed",
+        "Identified by Roselle as a Sequence 4 alternative to Alchemist."
+      ],
+      [
+        "mystery_pryer", 3, "Clairvoyant",
+        1011, true, "confirmed",
+        "Confirmed by Queen Mystic, Bernadette."
+      ],
+      [
+        "mystery_pryer", 2, "Sage",
+        1092, true, "confirmed",
+        "Confirmed by Queen Mystic, Bernadette."
+      ],
+      [
+        "mystery_pryer", 1, "Knowledge Emperor",
+        715, true, "confirmed",
+        "Confirmed through Klein while reading Roselle's Diary.",
+      ],
+      [
+        "mystery_pryer", 0, "Hermit", 1347, true, "confirmed",
+        "Mentioned as 'Hermit Uniqueness' on the Second Blasphemy Slate."
+      ],
+
+      /*
+       * Savant
+       */
+      [
+        "savant", 9, "Savant", 59, true, "confirmed",
+        "Known from Roselle's Diary."
+      ],
+      [
+        "savant", 8, "Archaeologist", 65, true, "confirmed",
+        "Known from the Nighthawks' internal documents."
+      ],
+      [
+        "savant", 7, "Appraiser", 65, true, "confirmed",
+        "Known from the Nighthawks' internal documents."
+      ],
+      [
+        "savant", 6, "Artisan", 217, true, "confirmed",
+        "Explicitly identified as Sequence 6. The modern name " +
+        "Machinery Specialist is also mentioned."
+      ],
+      [
+        "savant", 5, "Astronomer", 217, true, "confirmed",
+        "Identified as the modern name of Astromancer."
+      ],
+      [
+        "savant", 4, "Alchemist", 237, true, "assumed",
+        "Klein concluded Alchemist and Arcane Scholar to be Sequence 4 and 3." +
+        "However, he doens't know which is which."
+      ],
+      [
+        "savant", 3, "Arcane Scholar", 237, true, "assumed",
+        "Klein concluded Alchemist and Arcane Scholar to be Sequence 4 and 3." +
+        "However, he doens't know which is which."
+      ],
+      [
+        "savant", 2, "x", 2000, true, "confirmed",
+        ""
+      ],
+      [
+        "savant", 1, "Illuminator", 1347, true, "confirmed",
+        "Obtained by Klein after reading the Second Blasphemy Slate."
+      ],
+      [
+        "savant", 0, "Paragon", 1347, true, "confirmed",
+        "Mentioned as 'Paragon Uniqueness' on the Second Blasphemy Slate."
+      ],
+
+      /*
+       * Monster / Fate
+       */
+      [
+        "monster", 9, "Monster", 68, true, "confirmed",
+        "Confirmed by Old Neil as he talks with Klein about Ademisaul."
+      ],
+      [
+        "monster", 8, "Robot", 910, true, "confirmed",
+        "Identified after Klein defeats Enzo."
+      ],
+      [
+        "monster", 7, "Lucky One", 910, true, "confirmed",
+        "Also known as 'Lucky'."
+      ],
+      [
+        "monster", 6, "Calamity Priest", 910, true, "confirmed",
+        "Identified after Klein defeats Enzo."
+      ],
+      [
+        "monster", 5, "Winner", 910, true, "confirmed",
+        "Confirmed after Klein defeats Enzo.",
+        [
+          {
+            chapter: 731,
+            exactChapter: true,
+            status: "assumed",
+            note:
+              "The Life School of Thought had a Sequence 5 Winner, it is not stated that they belonged to the Monster Pathway."
+          },
+          {
+            chapter: 910,
+            exactChapter: true,
+            status: "confirmed",
+            note: "Confirmed after Klein defeats Enzo."
+          }
+        ]
+      ],
+      [
+        "monster", 4, "Misfortune Mage", 1227, true, "assumed",
+        "It is stated that 'Misfortune Mage' belongs to the Monster Pathway." +
+        "However, it is not confirmed which Sequence."
+      ],
+      [
+        "monster", 3, "Chaoswalker", 1227, true, "assumed",
+        "It is stated that 'Chaoswalker' belongs to the Monster Pathway." +
+        "However, it is not confirmed which Sequence."
+      ],
+      [
+        "monster", 2, "Soothsayer", 237, true, "confirmed",
+        "Explicitly identified as Sequence 2 in Roselle's record."
+      ],
+      [
+        "monster", 1, "Snake of Mercury", 237, true, "confirmed",
+        "Explicitly identified as Sequence 1. Also called Snake of Fate."
+      ],
+      [
+        "monster", 0, "Wheel of Fortune", 609, true, "assumed",
+        "Klein concludes the Name from Arrodes mentioning 'Wheel of Fortune Pathway'."
+      ],
+
+      /*
+       * Planter
+       */
+      [
+        "planter", 9, "Planter", 707, true, "confirmed",
+        "Explicitly listed by Klein.",
+        [
+          {
+            chapter: 240,
+            exactChapter: true,
+            status: "assumed",
+            note:
+              "Mentioned as 'Planter Pathway'. Suspected to be also the Name of Sequence 9."
+          },
+          {
+            chapter: 707,
+            exactChapter: true,
+            status: "confirmed",
+            note:
+              "Explicitly listed by Klein."
+          }
+        ]
+      ],
+      [
+        "planter", 8, "Doctor", 707, true, "confirmed",
+        "Explicitly listed by Klein. " +
+        "Ancient name: Healing Pastor."
+      ],
+      [
+        "planter", 7, "Harvest Priest", 707, true, "confirmed",
+        "Explicitly listed by Klein."
+      ],
+      [
+        "planter", 6, "Biologist", 707, true, "confirmed",
+        "Explicitly identified as Sequence 6 by Ufka."
+      ],
+      [
+        "planter", 5, "Druid", 815, true, "confirmed",
+        "Explicitly identified as Sequence 5 of the Planter Pathway.",
+        [
+          {
+            chapter: 708,
+            exactChapter: true,
+            status: "assumed",
+            note:
+              "Mentioned as a later Sequence of the Planter Pathway."
+          },
+          {
+            chapter: 815,
+            exactChapter: true,
+            status: "confirmed",
+            note:
+              "Explicitly identified as Sequence 5 of the Planter Pathway."
+          }
+        ]
+      ],
+      [
+        "planter", 4, "x", 2000, true, "confirmed",
+        "COI"
+      ],
+      [
+        "planter", 3, "Pallbearer", 1321, true, "confirmed",
+        "Mentioned by Emlyn after becoming an Earl."
+      ],
+      [
+        "planter", 2, "Desolate Matriarch", 1271, true, "confirmed",
+        "Mentioned by Green Light of the Seven Lights."
+      ],
+      [
+        "planter", 1, "Naturewalker", 1321, true, "confirmed",
+        "Mentioned by Emlyn after becoming an Earl."
+      ],
+      [
+        "planter", 0, "x", 2000, true, "confirmed",
+        "COI"
+      ],
+
+      /*
+       * Moon / Apothecary
+       */
+      [
+        "apothecary", 9, "Apothecary",
+        131, true, "confirmed",
+        "Viscount Glaint confirms Apothecary to be Sequence 9."
+      ],
+      [
+        "apothecary", 8, "Beast Tamer",
+        585, true, "confirmed",
+        "-",
+        [
+          {
+            chapter: 304,
+            exactChapter: true,
+            status: "confirmed",
+            note: "Confirmed by 'The chubby Apothecary'."
+          },
+          {
+            chapter: 585,
+            exactChapter: true,
+            status: "confirmed",
+            note: "Confirmed by 'The chubby Apothecary' Darkwill."
+          }
+        ]
+      ],
+      [
+        "apothecary", 7, "Vampire",
+        595, false, "confirmed",
+        "Identified as the stage between Beast Tamer and Potions Professor."
+      ],
+      [
+        "apothecary", 6, "Potions Professor",
+        592, true, "confirmed",
+        "Emlyn explicitly identifies Potions Professor as Sequence 6. " +
+        "It corresponds to a Sanguine Baron."
+      ],
+      [
+        "apothecary", 5, "Scarlet Scholar",
+        595, true, "confirmed",
+        "Cattleya explicitly identifies Scarlet Scholar as Sequence 5. " +
+        "It corresponds to Sanguine Viscount."
+      ],
+      [
+        "apothecary", 4, "Shaman King",
+        595, true, "confirmed",
+        "Cattleya explicitly identifies Shaman King as Sequence 4. " +
+        "It corresponds to Sanguine Earl."
+      ],
+      [
+        "apothecary", 3, "High Summoner", 1321, true, "confirmed",
+        "Mentioned by Emlyn after becoming an Earl. Corresponds to Sanguine Marquis."
+      ],
+      [
+        "apothecary", 2, "Life-Giver", 1321, true, "confirmed",
+        "Mentioned by Emlyn after becoming an Earl. Corresponds to Sanguine Duke."
+      ],
+      [
+        "apothecary", 1, "Beauty Goddess", 1271, true, "confirmed",
+        "Mentioned by Green Light of the Seven Lights. Corresponds to Sanguine Queen."
+      ],
+      [
+        "apothecary", 0, "x", 2000, true, "confirmed",
+        "COI"
+      ],
+      // Seq. 3: Marquis, Seq. 2: Duke, Seq. 1: Queen
+
+      /*
+       * Criminal / Abyss / Devil
+       */
+      [
+        "criminal", 9, "Criminal",
+        258, true, "confirmed",
+        "The Criminal Pathway is explicitly identified."
+      ],
+      [
+        "criminal", 8, "Unwinged Angel", 258, true, "confirmed",
+        "Mentioned by Miss Bodyguard." +
+        "Its ancient name is 'Coldblooded'."
+      ],
+      [
+        "criminal", 7, "Serial Killer", 258, true, "confirmed",
+        "Mentioned by Miss Bodyguard."
+      ],
+      [
+        "criminal", 6, "Devil",
+        292, true, "confirmed",
+        "Explicitly treated as Sequence 6 of the Abyss Pathway."
+      ],
+      [
+        "criminal", 5, "Desire Apostle",
+        414, true, "confirmed",
+        "Explicitly identified as Sequence 5 of the Devil Pathway."
+      ],
+      [
+        "criminal", 4, "x", 2000, true, "confirmed",
+        "COI"
+      ],
+      [
+        "criminal", 3, "x", 2000, true, "confirmed",
+        ""
+      ],
+      [
+        "criminal", 2, "x", 2000, true, "confirmed",
+        ""
+      ],
+      [
+        "criminal", 1, "Filthy Monarch", 1347, true, "confirmed",
+        "Obtained by Klein after reading the Second Blasphemy Slate."
+      ],
+      [
+        "criminal", 0, "Abyss",
+        292, true, "confirmed",
+        "Explicitly identified as Sequence 0 and the King of Devils.",
+        [
+          {
+            chapter: 292,
+            exactChapter: true,
+            status: "assumed",
+            note: "A guess made by Klein."
+          },
+          {
+            chapter: 629,
+            exactChapter: true,
+            status: "confirmed",
+            note: "Confirmed by Klein."
+          }
+        ]
+      ],
+
+      /*
+       * Prisoner / Mutant (ab Ch. 314)
+       */
+      [
+        "prisoner", 9, "Prisoner",
+        200, true, "confirmed",
+        "Known from the Nighthawks' internal documents."
+      ],
+      [
+        "prisoner", 8, "Lunatic",
+        331, true, "confirmed",
+        "Described by Maric as Sequence 8 of the Mutant Pathway."
+      ],
+      [
+        "prisoner", 7, "Werewolf",
+        331, true, "confirmed",
+        "Explicitly described by Maric as Sequence 7."
+      ],
+      [
+        "prisoner", 6, "Zombie",
+        331, true, "confirmed",
+        "Maric identifies himself as a Sequence 6 Zombie."
+      ],
+      [
+        "prisoner", 5, "Wraith",
+        331, true, "confirmed",
+        "Sharron identifies herself as Sequence 5 Wraith."
+      ],
+      [
+        "prisoner", 4, "Puppet",
+        456, true, "confirmed",
+        "Explicitly identified as Sequence 4 of the Mutant Pathway."
+      ],
+      [
+        "prisoner", 3, "Discpile of Silence",
+        1042, true, "confirmed",
+        "Explicitly confirmed by Sharron as Sequence 3 of the Mutant Pathway."
+        + " Formerly known as 'Cursed Artifact'."
+      ],
+      [
+        "prisoner", 2, "Ancient Bane",
+        1042, true, "confirmed",
+        "Explicitly confirmed by Sharron as Sequence 2 of the Mutant Pathway."
+      ],
+      [
+        "prisoner", 1, "Abomination",
+        1042, true, "confirmed",
+        "Explicitly confirmed by Sharron as Sequence 1 of the Mutant Pathway."
+      ],
+      [
+        "prisoner", 0, "Chained", 1347, true, "confirmed",
+        "Mentioned as 'Chained Uniqueness' on the Second Blasphemy Slate."
+      ],
+
+      /*
+       * Lawyer / Black Emperor (ab Ch. 323)
+       */
+      [
+        "lawyer", 9, "Lawyer",
+        200, true, "confirmed",
+        "Explicitly identified as the modern name of Sequence 9 of the Dark Emperor Pathway."
+      ],
+      [
+        "lawyer", 8, "Barbarian",
+        323, true, "confirmed",
+        "Confirmed through the Dark Emperor Card of Blasphemy."
+      ],
+      [
+        "lawyer", 7, "Briber",
+        323, true, "confirmed",
+        "Confirmed through the Dark Emperor Card of Blasphemy."
+      ],
+      [
+        "lawyer", 6, "Baron of Corruption",
+        249, true, "confirmed",
+        "Explicitly identified as Sequence 6 of the Lawyer or Dark Emperor Pathway."
+      ],
+      [
+        "lawyer", 5, "Mentor of Confusion",
+        323, true, "confirmed",
+        "Confirmed through the Dark Emperor Card of Blasphemy."
+      ],
+      [
+        "lawyer", 4, "Count of the Fallen",
+        323, true, "confirmed",
+        "Confirmed through the Dark Emperor Card of Blasphemy."
+      ],
+      [
+        "lawyer", 3, "Frenzied Mage",
+        323, true, "confirmed",
+        "Confirmed through the Dark Emperor Card of Blasphemy."
+      ],
+      [
+        "lawyer", 2, "Duke of Entropy",
+        323, true, "confirmed",
+        "Confirmed through the Dark Emperor Card of Blasphemy."
+      ],
+      [
+        "lawyer", 1, "Prince of Abolition",
+        323, true, "confirmed",
+        "The text also uses the name Prince of Disorder."
+      ],
+      [
+        "lawyer", 0, "Black Emperor",
+        323, true, "confirmed",
+        "The Card of Blasphemy uses the name Dark Emperor."
+      ],
+
+      /*
+       * Arbiter
+       */
+      [
+        "arbiter", 9, "Arbiter",
+        114, true, "confirmed",
+        "Alger mentions the 'Arbiter Pathway' in the Tarot Club."
+      ],
+      [
+        "arbiter", 8, "Sheriff",
+        131, true, "confirmed",
+        "Explicitly identified as Sequence 8."
+      ],
+      [
+        "arbiter", 7, "Interrogator",
+        200, true, "confirmed",
+        "Explicitly identified as Sequence 7."
+      ],
+      [
+        "arbiter", 6, "Judge",
+        381, true, "assumed",
+        "---",
+        [
+          {
+            chapter: 381,
+            exactChapter: true,
+            status: "assumed",
+            note: "Klein reasons that the Pathway has something to do with the law and guesses Judge to be Sequence 6 or 5."
+          },
+          {
+            chapter: 674,
+            exactChapter: true,
+            status: "confirmed",
+            note: "Klein reasons that the Pathway has something to do with the law and guesses Judge to be Sequence 6 or 5."
+              + " Anderson confirms that Judge is Sequence 6."
+          }
+        ]
+      ],
+      [
+        "arbiter", 5, "Disciplinary Paladin", 1037, true, "confirmed",
+        "Mentioned by Xio at the Tarot Club Gathering."
+      ],
+      [
+        "arbiter", 4, "Imperative Mage", 1278, true, "confirmed",
+        "It is implied that Imperative Mage is the first Demigod Potion of the Arbiter Pathway."
+      ],
+      [
+        "arbiter", 3, "Chaos Hunter", 1146, true, "confirmed",
+        "Prince Grove was mentioned as Sequence 3 Chaos Hunter." +
+        "After he used the Judge's Authority it can be deducted that it belongs to the Arbiter Pathway."
+      ],
+      [
+        "arbiter", 2, "Balancer",
+        1110, true, "assumed",
+        "Identified as Sequence 2 by Saintess of White, Katarina. However, the corresponding Pathway is not mentioned."
+      ],
+      [
+        "arbiter", 1, "Hand of Order",
+        1110, true, "confirmed",
+        "Explicitly identified as Sequence 1 of the Arbiter Pathway by Saintess of White, Katarina."
+      ],
+      [
+        "arbiter", 0, "Justiciar", 1347, true, "confirmed",
+        "Mentioned as 'Justiciar Uniqueness' on the Second Blasphemy Slate."
+      ]
+    ];
+    /*
+      * PATHWAY NAME FORMAT
+      *
+      * Die Property ist die stabile Pathway-ID aus rawSequenceData.
+      *
+      * chapter:
+      *   Ab diesem Kapitel wird der Name angezeigt.
+      *
+      * name:
+      *   Der sichtbare Pathway-Name.
+      */
+    const pathwayNameData = {
+      seer: [
+        {
+          chapter: 842,
+          name: "Fool"
+        }
+      ],
+      hunter: [
+        {
+          chapter: 456,
+          name: "Red Priest"
+        }
+      ],
+      lawyer: [
+        {
+          chapter: 323,
+          name: "Black Emperor"
+        }
+      ],
+      apothecary: [
+        {
+          chapter: 595,
+          name: "Apothecary / Moon"
+        }
+      ],
+      assassin: [
+        {
+          chapter: 200,
+          name: "Demoness"
+        }
+      ],
+      bard: [
+        {
+          chapter: 265,
+          name: "Sun"
+        }
+      ],
+      corpse_collector: [
+        {
+          chapter: 203,
+          name: "Death"
+        }
+      ],
+      criminal: [
+        {
+          chapter: 258,
+          name: "Devil"
+        },
+        {
+          chapter: 629,
+          name: "Devil / Abyss"
+        }
+      ],
+      monster: [
+        {
+          chapter: 612,
+          name: "Monter / Fate"
+        }
+      ],
+      prisoner: [
+        {
+          chapter: 329,
+          name: "Prisoner / Mutant"
+        }
+      ],
+      sailor: [
+        {
+          chapter: 528,
+          name: "Storm / Sailor"
+        },
+        {
+          chapter: 815,
+          name: "Tyrant"
+        }
+      ],
+      sleepless: [
+        {
+          chapter: 217,
+          name: "Evernight"
+        }
+      ],
+      spectator: [
+        {
+          chapter: 485,
+          name: "Spectator / Visionary"
+        }
+      ],
+      warrior: [
+        {
+          chapter: 138,
+          name: "Giant"
+        }
+      ],
+      planter: [
+        {
+          chapter: 240,
+          name: "Planter"
+        }
+      ]
+    };
+
+    /*
+     * Normalize the compact data format.
+     */
+    const sequenceData = rawSequenceData.map(([
+      pathway,
+      sequence,
+      name,
+      chapter,
+      exactChapter,
+      status,
+      note,
+      revelations
+    ]) => ({
+      pathway,
+      sequence,
+      name,
+      chapter,
+      exactChapter,
+      status,
+      note,
+
+      revelations: Array.isArray(revelations)
+        ? revelations
+          .map(revelation => ({
+            chapter: revelation.chapter,
+            exactChapter:
+              revelation.exactChapter === true,
+            status: revelation.status,
+            note: revelation.note
+          }))
+          .sort((a, b) => a.chapter - b.chapter)
+        : [
+          {
+            chapter,
+            exactChapter,
+            status,
+            note
+          }
+        ]
+    }));
+
+    const chapterInput =
+      document.getElementById("chapterInput");
+
+    const searchInput =
+      document.getElementById("searchInput");
+
+    const statusFilter =
+      document.getElementById("statusFilter");
+
+    const pathwayList =
+      document.getElementById("pathwayList");
+
+    const mainContent =
+      document.getElementById("mainContent");
+
+    const historyList =
+      document.getElementById("historyList");
+
+    const knownCount =
+      document.getElementById("knownCount");
+
+    const pathwayCount =
+      document.getElementById("pathwayCount");
+
+    const confirmedCount =
+      document.getElementById("confirmedCount");
+
+    const assumedCount =
+      document.getElementById("assumedCount");
+
+    const sidebar =
+      document.getElementById("sidebar");
+
+    const mobileMenuButton =
+      document.getElementById("mobileMenuButton");
+
+    const mobileOverlay =
+      document.getElementById("mobileOverlay");
+
+    const savedChapter =
+      localStorage.getItem("lotm-current-chapter");
+
+    const savedPathway =
+      localStorage.getItem("lotm-selected-pathway");
+
+    let selectedPathway = savedPathway || "seer";
+
+    /*
+     * Favorites are stored locally.
+     */
+    let savedFavorites = [];
+
+    try {
+      savedFavorites = JSON.parse(
+        localStorage.getItem("lotm-favorites") || "[]"
+      );
+    } catch {
+      savedFavorites = [];
+    }
+
+    const favorites = new Set(savedFavorites);
+
+    if (savedChapter !== null) {
+      chapterInput.value = savedChapter;
+    }
+
+    function escapeHtml(value) {
+      return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function normalizeSearchText(value) {
+      return String(value || "")
+        .normalize("NFKD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .toLocaleLowerCase("en")
+        .trim();
+    }
+
+    function getSearchTerms() {
+      return normalizeSearchText(searchInput.value)
+        .split(/\s+/)
+        .filter(Boolean);
+    }
+
+    /*
+     * Search includes:
+     *
+     * 1. Pathway
+     * 2. Sequence name
+     * 3. Current note
+     *
+     * All entered words must occur somewhere in the combined
+     * searchable text.
+     */
+    function entryMatchesSearch(entry, searchTerms) {
+      if (searchTerms.length === 0) {
+        return true;
+      }
+
+      const currentPathwayName =
+        getPathwayDisplayName(entry.pathway);
+
+      const searchableText = normalizeSearchText([
+        currentPathwayName,
+        entry.name,
+        entry.note
+      ].join(" "));
+
+      return searchTerms.every(term => {
+        return searchableText.includes(term);
+      });
+    }
+
+    function getCurrentChapter() {
+      const parsedChapter = Number.parseInt(
+        chapterInput.value,
+        10
+      );
+
+      if (!Number.isFinite(parsedChapter)) {
+        return 1;
+      }
+
+      return Math.max(
+        1,
+        Math.min(1432, parsedChapter)
+      );
+    }
+    function getPathwayDisplayName(
+      pathwayId,
+      currentChapter = getCurrentChapter()
+    ) {
+      const configuredNames =
+        pathwayNameData[pathwayId] || [];
+
+      const availableNames = configuredNames
+        .filter(nameEntry => {
+          return nameEntry.chapter <= currentChapter;
+        })
+        .sort((a, b) => {
+          return a.chapter - b.chapter;
+        });
+
+      if (availableNames.length > 0) {
+        return availableNames[
+          availableNames.length - 1
+        ].name;
+      }
+
+      /*
+       * Fallback:
+       * Wenn keine eigene Pathway-Konfiguration existiert,
+       * wird der Name von Sequence 9 verwendet.
+       */
+      const sequenceNine = sequenceData.find(entry => {
+        return entry.pathway === pathwayId &&
+          entry.sequence === 9 &&
+          entry.chapter <= currentChapter;
+      });
+
+      if (sequenceNine) {
+        return sequenceNine.name;
+      }
+
+      /*
+       * Letzter Fallback ist die interne ID.
+       */
+      return pathwayId;
+    }
+
+    function getCurrentRevelation(entry, currentChapter) {
+      const availableRevelations = entry.revelations
+        .filter(revelation => {
+          return revelation.chapter <= currentChapter;
+        })
+        .sort((a, b) => {
+          return a.chapter - b.chapter;
+        });
+
+      if (availableRevelations.length === 0) {
+        return null;
+      }
+
+      return availableRevelations[
+        availableRevelations.length - 1
+      ];
+    }
+
+    function resolveEntryForChapter(entry, currentChapter) {
+      const currentRevelation = getCurrentRevelation(
+        entry,
+        currentChapter
+      );
+
+      if (!currentRevelation) {
+        return null;
+      }
+
+      return {
+        ...entry,
+        chapter: currentRevelation.chapter,
+        exactChapter: currentRevelation.exactChapter,
+        status: currentRevelation.status,
+        note: currentRevelation.note
+      };
+    }
+
+    /*
+     * Resolves entries according to chapter and status before
+     * applying the global Pathway, name and notes search.
+     */
+    function getVisibleEntries() {
+      const currentChapter = getCurrentChapter();
+      const selectedStatus = statusFilter.value;
+      const searchTerms = getSearchTerms();
+
+      return sequenceData
+        .map(entry => {
+          return resolveEntryForChapter(
+            entry,
+            currentChapter
+          );
+        })
+        .filter(entry => entry !== null)
+        .filter(entry => {
+          if (selectedStatus === "all") {
+            return true;
+          }
+
+          return entry.status === selectedStatus;
+        })
+        .filter(entry => {
+          return entryMatchesSearch(
+            entry,
+            searchTerms
+          );
+        });
+    }
+
+    function groupByPathway(entries) {
+      return entries.reduce((groups, entry) => {
+        if (!groups[entry.pathway]) {
+          groups[entry.pathway] = [];
+        }
+
+        groups[entry.pathway].push(entry);
+
+        return groups;
+      }, {});
+    }
+
+    function saveFavorites() {
+      localStorage.setItem(
+        "lotm-favorites",
+        JSON.stringify([...favorites])
+      );
+    }
+
+    function openMobileSidebar() {
+      sidebar.classList.add("open");
+      mobileOverlay.classList.add("visible");
+
+      document.body.classList.add("menu-open");
+
+      mobileOverlay.setAttribute("aria-hidden", "false");
+      mobileMenuButton.setAttribute("aria-expanded", "true");
+    }
+
+    function closeMobileSidebar() {
+      sidebar.classList.remove("open");
+      mobileOverlay.classList.remove("visible");
+
+      document.body.classList.remove("menu-open");
+
+      mobileOverlay.setAttribute("aria-hidden", "true");
+      mobileMenuButton.setAttribute("aria-expanded", "false");
+    }
+
+    function renderStatistics(entries, groups) {
+      knownCount.textContent = entries.length;
+
+      pathwayCount.textContent =
+        Object.keys(groups).length;
+
+      confirmedCount.textContent = entries.filter(entry => {
+        return entry.status === "confirmed";
+      }).length;
+
+      assumedCount.textContent = entries.filter(entry => {
+        return entry.status === "assumed";
+      }).length;
+    }
+
+    function sortPathways(pathways) {
+      return pathways.sort((a, b) => {
+        const aFavorite = favorites.has(a);
+        const bFavorite = favorites.has(b);
+
+        if (aFavorite !== bFavorite) {
+          return aFavorite ? -1 : 1;
+        }
+
+        const aDisplayName =
+          getPathwayDisplayName(a);
+
+        const bDisplayName =
+          getPathwayDisplayName(b);
+
+        return aDisplayName.localeCompare(
+          bDisplayName,
+          "de"
+        );
+      });
+    }
+
+    const sequenceCountKnowledge = {
+      chapter: 265,
+      total: 10
+    };
+
+    function isTotalSequenceCountKnown() {
+      return getCurrentChapter() >= sequenceCountKnowledge.chapter;
+    }
+
+    function getSequenceCountLabel(visibleCount) {
+      if (isTotalSequenceCountKnown()) {
+        return `${visibleCount}/${sequenceCountKnowledge.total}`;
+      }
+
+      return `${visibleCount} known`;
+    }
+
+    function renderPathwayNavigation(groups) {
+      const pathways = sortPathways(
+        Object.keys(groups)
+      );
+
+      if (pathways.length === 0) {
+        pathwayList.innerHTML = `
+          <div class="no-pathways">
+            No entries match the current chapter,
+            status and search filters.
+          </div>
+        `;
+
+        return;
+      }
+
+      if (!pathways.includes(selectedPathway)) {
+        selectedPathway = pathways[0];
+      }
+
+      localStorage.setItem(
+        "lotm-selected-pathway",
+        selectedPathway
+      );
+
+      pathwayList.innerHTML = pathways
+        .map(pathway => {
+          const entries = groups[pathway];
+          const displayName =
+            getPathwayDisplayName(pathway);
+
+          const totalCountKnown = isTotalSequenceCountKnown();
+
+          const percentage = totalCountKnown
+            ? Math.min(
+              100,
+              Math.round(
+                (entries.length / sequenceCountKnowledge.total) * 100
+              )
+            )
+            : 0;
+
+          const favoritePrefix =
+            favorites.has(pathway) ? "★ " : "";
+
+          return `
+            <button
+              class="pathway-button ${pathway === selectedPathway
+              ? "active"
+              : ""
+            }"
+              type="button"
+              data-pathway="${escapeHtml(pathway)}"
+            >
+              <span class="pathway-button-top">
+                <span class="pathway-name">
+                  ${favoritePrefix}${escapeHtml(displayName)}
+                </span>
+
+                <span class="pathway-count">
+                  ${getSequenceCountLabel(entries.length)}
+                </span>
+              </span>
+
+              ${totalCountKnown ? `
+              <span class="completion-bar">
+                <span style="width: ${percentage}%"></span>
+              </span>
+              ` : ""}
+            </button>
+          `;
+        })
+        .join("");
+
+      pathwayList
+        .querySelectorAll(".pathway-button")
+        .forEach(button => {
+          button.addEventListener("click", () => {
+            selectedPathway = button.dataset.pathway;
+
+            localStorage.setItem(
+              "lotm-selected-pathway",
+              selectedPathway
+            );
+
+            closeMobileSidebar();
+            render();
+          });
+        });
+    }
+
+    function getChapterLabel(entry) {
+      if (entry.exactChapter) {
+        return `Chapter ${entry.chapter}`;
+      }
+
+      return `Known by Chapter ${entry.chapter}`;
+    }
+
+    function renderMainPanel(groups) {
+      const entries = groups[selectedPathway] || [];
+      const pathwayDisplayName =
+        getPathwayDisplayName(selectedPathway);
+
+      if (entries.length === 0) {
+        mainContent.innerHTML = `
+          <div class="pathway-card">
+            <div class="empty-state">
+              No Sequence entries match the current filters.
+            </div>
+          </div>
+        `;
+
+        return;
+      }
+
+      /*
+       * Sequence 0 is rendered first, then 1 through 9.
+       */
+      const sortedEntries = entries
+        .slice()
+        .sort((a, b) => {
+          return a.sequence - b.sequence;
+        });
+
+      const highestKnown = sortedEntries[0];
+
+      const confirmedEntries = entries.filter(entry => {
+        return entry.status === "confirmed";
+      }).length;
+
+      const assumedEntries = entries.filter(entry => {
+        return entry.status === "assumed";
+      }).length;
+
+      const isFavorite = favorites.has(selectedPathway);
+      const hasSearch = getSearchTerms().length > 0;
+
+      mainContent.innerHTML = `
+        <article class="pathway-card">
+          <header class="pathway-card-header">
+            <div class="pathway-title-group">
+              <h2>
+                ${escapeHtml(pathwayDisplayName)} Pathway
+              </h2>
+
+              <p class="pathway-subtitle">
+                Visible information at Chapter
+                ${getCurrentChapter()}
+                ${hasSearch
+          ? " · Search results only"
+          : ""
+        }
+              </p>
+            </div>
+
+            <button
+              class="favorite-button ${isFavorite ? "active" : ""
+        }"
+              id="favoriteButton"
+              type="button"
+            >
+              ${isFavorite
+          ? "★ Favorite"
+          : "☆ Add favorite"
+        }
+            </button>
+          </header>
+
+          <section class="pathway-overview">
+            <div class="overview-stat">
+              <strong>${getSequenceCountLabel(entries.length)}</strong>
+              <span>
+                ${isTotalSequenceCountKnown() ? "Visible Sequences" : "Known Sequences"}
+              </span>
+            </div>
+
+            <div class="overview-stat">
+              <strong>
+                ${escapeHtml(highestKnown.name)}
+              </strong>
+              <span>Highest known stage</span>
+            </div>
+
+            <div class="overview-stat">
+              <strong>
+                ${confirmedEntries} / ${assumedEntries}
+              </strong>
+              <span>Confirmed / assumed</span>
+            </div>
+          </section>
+
+          <section class="sequence-ladder">
+            ${sortedEntries.map(entry => `
+              <article
+                class="sequence-row ${hasSearch ? "search-match" : ""
+          }"
+              >
+                <div class="sequence-value">
+                  ${entry.sequence}
+                </div>
+
+                <div class="sequence-copy">
+                  <strong>
+                    ${escapeHtml(entry.name)}
+                  </strong>
+
+                  <small>
+                    ${escapeHtml(getChapterLabel(entry))}
+                  </small>
+
+                  <span class="sequence-note">
+                    ${escapeHtml(entry.note)}
+                  </span>
+                </div>
+
+                <span class="badge badge-${entry.status}">
+                  ${entry.status === "confirmed"
+            ? "Confirmed"
+            : "Assumed"
+          }
+                </span>
+              </article>
+            `).join("")}
+          </section>
+        </article>
+      `;
+
+      document
+        .getElementById("favoriteButton")
+        .addEventListener("click", () => {
+          if (favorites.has(selectedPathway)) {
+            favorites.delete(selectedPathway);
+          } else {
+            favorites.add(selectedPathway);
+          }
+
+          saveFavorites();
+          render();
+        });
+    }
+
+    function renderHistory(entries) {
+      const history = entries
+        .slice()
+        .sort((a, b) => {
+          if (b.chapter !== a.chapter) {
+            return b.chapter - a.chapter;
+          }
+
+          return a.sequence - b.sequence;
+        })
+        .slice(0, 11);
+
+      if (history.length === 0) {
+        historyList.innerHTML = `
+          <div class="empty-state">
+            No discoveries match the current filters.
+          </div>
+        `;
+
+        return;
+      }
+
+      historyList.innerHTML = history
+        .map(entry => `
+          <article class="history-entry ${entry.status}">
+            <div class="history-chapter">
+              ${escapeHtml(getChapterLabel(entry))}
+            </div>
+
+            <strong>
+              ${escapeHtml(entry.name)}
+            </strong>
+
+            <span>
+              Sequence ${entry.sequence},
+              ${escapeHtml(
+          getPathwayDisplayName(entry.pathway)
+        )} Pathway
+            </span>
+
+            <span>
+              ${entry.status === "confirmed"
+            ? "Confirmed"
+            : "Assumed"
+          }
+            </span>
+          </article>
+        `)
+        .join("");
+    }
+
+    function render() {
+      const currentChapter = getCurrentChapter();
+
+      chapterInput.value = currentChapter;
+
+      localStorage.setItem(
+        "lotm-current-chapter",
+        String(currentChapter)
+      );
+
+      const visibleEntries = getVisibleEntries();
+      const groups = groupByPathway(visibleEntries);
+
+      renderStatistics(visibleEntries, groups);
+      renderPathwayNavigation(groups);
+      renderMainPanel(groups);
+      renderHistory(visibleEntries);
+    }
+
+    chapterInput.addEventListener("input", render);
+    searchInput.addEventListener("input", render);
+    statusFilter.addEventListener("change", render);
+
+    mobileMenuButton.addEventListener("click", () => {
+      if (sidebar.classList.contains("open")) {
+        closeMobileSidebar();
+      } else {
+        openMobileSidebar();
+      }
+    });
+
+
+    mobileOverlay.addEventListener(
+      "click",
+      closeMobileSidebar
+    );
+
+
+    document.addEventListener("keydown", event => {
+      if (
+        event.key === "Escape" &&
+        sidebar.classList.contains("open")
+      ) {
+        closeMobileSidebar();
+      }
+    });
+
+
+    /*
+     * Falls das Fenster bei geöffnetem Burger-Menü
+     * wieder auf Desktop-Größe vergrößert wird,
+     * wird der mobile Zustand vollständig entfernt.
+     */
+    window.addEventListener("resize", () => {
+      if (
+        window.innerWidth > 760 &&
+        sidebar.classList.contains("open")
+      ) {
+        closeMobileSidebar();
+      }
+    });
+
+    render();
+  </script>
+</body>
+
+</html>
