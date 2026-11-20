@@ -22,7 +22,7 @@ This makes the tracker particularly useful for **first-time readers** who want a
 
 ## 📥 Download
 
-**[Download the Pathways & Sequences Tracker](https://raw.githubusercontent.com/gabsllll/lotm-pathway-guide/refs/heads/main/Pathways%20and%20Sequences_V2.html)**
+**[Download the Pathways & Sequences Tracker](https://raw.githubusercontent.com/gabsllll/lotm-pathway-guide/refs/heads/main/Pathways%20and%20Sequences.html)**
 
 After downloading, simply open the `.html` file in your browser. No installation is required.
 
