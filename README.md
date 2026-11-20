@@ -20,6 +20,11 @@ For example, if a Sequence name has not yet been revealed at your current chapte
 
 This makes the tracker particularly useful for **first-time readers** who want a reference for the increasingly complex Beyonder system without having to use wikis that may contain major spoilers.
 
+## 📥 Download
+
+**[Download the Pathways & Sequences Tracker](https://raw.githubusercontent.com/gabsllll/lotm-pathway-guide/refs/heads/main/Pathways%20and%20Sequences_V2.html)**
+
+After downloading, simply open the `.html` file in your browser. No installation is required.
 
 
 ## ✨ Features
